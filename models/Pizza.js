@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+const {Schema, model} = require('mongoose');
 const dateFormat = require('../utils/dateFormat');
 
-const PizzaSchema = mongoose.Schema({
+const PizzaSchema = new Schema({
     pizzaName: {
       type: String
     },
@@ -20,7 +20,7 @@ const PizzaSchema = mongoose.Schema({
     toppings: [],
     comments: [
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "Comment"
         }
     ]
@@ -35,11 +35,11 @@ const PizzaSchema = mongoose.Schema({
   );
 
   PizzaSchema.virtual('commentCount').get(function(){
-      return this.comments.length
+      return this.comments.reduce((total, comment) => total + comment.replies.length + 1, 0)
   })
 
   // create the Pizza model using the PizzaSchema
-const Pizza = mongoose.model('Pizza', PizzaSchema);
+const Pizza = model ('Pizza', PizzaSchema);
 
 // export the Pizza model
 module.exports = Pizza;
